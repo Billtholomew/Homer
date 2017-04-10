@@ -134,6 +134,7 @@ def get_lesson_histogram(db):
 
 def get_lessons_with_ages(db):
     pipeline = [
+        {'$match': {'age': {'$gte': 1, '$lte': 10}}},
         {'$lookup': {'from': 'lessons', 'localField': '_p', 'foreignField': '_p', 'as': 'lessondata'}},
         {'$project': {'age': 1, '_p': 1, 'lessondata.manuscripttitle': 1, 'lessondata.unitcategory': 1}},
         {'$unwind': '$lessondata'},
@@ -141,3 +142,4 @@ def get_lessons_with_ages(db):
                     'manuscripts': {'$addToSet': '$lessondata.manuscripttitle'},
                     'categories': {'$addToSet': '$lessondata.unitcategory'}}}
     ]
+    return db['users'].aggregate(pipeline)
