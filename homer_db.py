@@ -113,21 +113,6 @@ def get_average_times(db, _p, count_outliers = False):
         times['outliers'] = outliers
     return times
 
-    
-def get_age_histogram(db, collection):
-    pipeline = [
-        {'$match': {'age': {'$gte': 0, '$lte': 100}, 'name': {'$exists': True}}},
-        {'$group': {'_id': '$age', 'count': {'$sum': 1}}},  # get how many of each age there are
-        {'$sort': {'age': 1}}
-    ]
-    age_counts = db[collection].aggregate(pipeline)
-    ages, counts = zip(*[(age_count['_id'], age_count['count']) for age_count in age_counts])
-    plt.bar(ages, counts)
-    plt.title('Age Distribution')
-    plt.xlabel('Age')
-    plt.ylabel('Count')
-    plt.show()
-
 
 # gets a distribution for ALL users of lesson lengths
 # used for analysis
@@ -146,14 +131,6 @@ def get_lesson_histogram(db):
         print (i / float(num_users)) * 100
     return session_times
 
-
-def get_valid_ages(db):
-    pipeline = [
-        {'$match': {'age': {'$gte': 0, '$lte': 100}}},
-        {'$group': {'_id': '$age', 'count': {'$sum': 1}}},  # get how many of each age there are
-        {'$sort': {'age': 1}}
-    ]
-    valid_ages = db['events'].aggregate(pipeline)
 
 def get_lessons_with_ages(db):
     pipeline = [
